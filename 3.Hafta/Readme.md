@@ -234,7 +234,7 @@ farklı SQL işlemlerini uygulamanızı sağlamaktır.
 <p>Not: Bu tablo playlisttrack yapısının örnek bir kısmını göstermektedir; Tüm veri setine aşağıdaki kısımda verilen tablo oluşturma komutlarından ulaşabilirsiniz.</p>
 
 <hr>
-![Image Alt](https://github.com/Sercan-Ayvaz/TurkStudentCo-DATA-SCIENCE-BOOTCAMP-SQL/blob/c91ad997d07c420272111ac3652b38e11f0dc027/3.Hafta/Schema.jpeg)
+![Image Alt](https://github.com/Sercan-Ayvaz/TurkStudentCo-DATA-SCIENCE-BOOTCAMP-SQL/blob/c4af771a3dd5572dd66eb35b10962b70a0cee3b8/3.Hafta/Schema.jpeg)
 <hr>
 <h3>Tablo Oluşturma Komutları</h3>
 <hr>
