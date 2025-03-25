@@ -1,4 +1,4 @@
-<h1>1.Hafta Ödevi</h1>
+<h1>2.Hafta Ödevi</h1>
 
 <h3>Amaç</h3>
 <hr>
