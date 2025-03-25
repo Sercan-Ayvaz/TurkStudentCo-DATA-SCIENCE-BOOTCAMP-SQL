@@ -1,0 +1,53 @@
+*************************************************** SORU-1 ********************************************************
+-- Soru(a) Çalışanların sadece FirstName, LastName ve Salary bilgilerini getiren bir SQL sorgusu yazınız.
+
+SELECT firstname,lastname,salary FROM employees;
+
+-- Yorum: Select sorgu cümlesiyle employees tablosundan firstname,lastname ve salary kolonlarını çekiyoruz.
+
+*************************************************** SORU-2 ********************************************************
+-- Soru(b) Çalışanların çalıştıkları departmanları benzersiz olarak listeleyen bir SQL sorgusu yazınız.
+
+'''SELECT DISTINCT departmentid FROM employees;'''
+
+/* Yorum: Select sorgusuyla employees tablosundaki, departmenid kolonundaki verilerin farklı olanlarını listeletiyoruz.*/
+
+*************************************************** SORU-3 ********************************************************
+-- Soru(c) Sadece IT departmanında çalışanların bilgilerini getiren bir SQL sorgusu yazınız.
+
+-- Çözüm - 1
+
+'''SELECT * FROM employees WHERE departmentid = 1;'''
+
+-- Yorum: Select sorgusuyla employees tablosundan departmenid verilerinin 1' e eşit olanlarını listeletiyoruz
+
+-- Çözüm - 2
+
+'''SELECT * FROM employees As emp 
+	INNER JOIN departments dpr 
+	ON emp.departmentid = dpr.departmentid 
+	WHERE dpr.departmentname ='IT';'''
+
+/* Yorum: Inner join kullanarak iki farklı tabloyu keyler yardımıyla bribirine eşleyerek tek bir tabloymuş gibi sorgu yazabiliriz. */
+
+*************************************************** SORU-4 ********************************************************
+-- Soru(d) Çalışanları maaşlarına göre büyükten küçüğe sıralayan bir SQL sorgusu yazınız.
+
+'''SELECT * FROM employees ORDER BY salary DESC;'''
+
+-- Yorum: Select sorgusuyla employees tablosundaki verileri order by yardımıyla, salary verilerinin büyükten küçüğe doğru sıralıyoruz.
+
+*************************************************** SORU-5 ********************************************************
+/* Soru(e) Çalışanların FirstName ve LastName alanlarını birleştirerek, tam adlarını içeren yeni bir kolon
+oluşturan bir SQL sorgusu yazınız. */
+
+-- Çözüm - 1
+
+'''SELECT firstname || ' ' || lastname AS name FROM employees;'''
+
+-- Çözüm - 2
+
+'''SELECT CONCAT(firstname ,' ', lastname) AS name FROM employees;'''
+
+/* Yorum: Select sorgusuyla employees tablosundaki firstname ve lastname kolonlarını CONCAT() fonksiyonunu ya da '||' 
+operatörlerini kullanarak birleştirme işlemlerini yapıyoruz ve oluşan kolona name adını atıyoruz AS özelliği ile */
