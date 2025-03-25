@@ -235,6 +235,7 @@ farklı SQL işlemlerini uygulamanızı sağlamaktır.
 
 <hr>
 <h3>Schema</h3>
+<hr>
 <img src="https://github.com/Sercan-Ayvaz/TurkStudentCo-DATA-SCIENCE-BOOTCAMP-SQL/blob/c4af771a3dd5572dd66eb35b10962b70a0cee3b8/3.Hafta/Schema.jpeg" alt="Schema">
 <hr>
 <h3>Tablo Oluşturma Komutları</h3>
