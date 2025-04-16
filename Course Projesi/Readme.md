@@ -229,7 +229,7 @@
     b. Veritabanını Seçin ve Bağlantı Kurun
       Veritabanını seçmek için şu komutu kullanın:
 
-       ```\c course```
+   	```\c course```
   
       Açıklama: Bu komut, course veritabanına bağlanmanızı sağlar. Veritabanı adını doğru yazdığınızdan emin olun.
 
