@@ -93,7 +93,7 @@ CREATE TABLE author (
     creation_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
     -- Email format kontrolü
     CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),    
-    -- Geçerli doğum tarihi kontrolü (1900'den sonra doğmuş varsayıyoruz)
+    -- Geçerli doğum tarihi kontrolü (1800'den sonra doğmuş varsayıyoruz)
     CONSTRAINT valid_birthday CHECK (birthday > '1800-01-01' AND birthday <= CURRENT_DATE)
 );
 -------------------------------------------------------------------------------------
