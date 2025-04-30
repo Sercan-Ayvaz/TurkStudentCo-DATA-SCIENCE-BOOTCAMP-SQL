@@ -8,7 +8,7 @@ Bu rehberde, PostgreSQL üzerinde DVD Rental örnek veritabanını `.sql` uzant�
 - pgAdmin veya terminal
 - `dvdrental.sql` dosyası (veritabanı yedeği)
 
-> 📌 Not: `.sql` dosyasını [PostgreSQL resmi sitesinden](https://www.postgresql.org/ftp/projects/pgFoundry/dbsamples/dvdrental/) veya güvenilir kaynaklardan indirebilirsiniz.
+> 📌 Not: `.sql` dosyasını [PostgreSQL resmi sitesinden](https://www.postgresql.org/) veya güvenilir kaynaklardan indirebilirsiniz.
 Eğer bulamazsanız, `.tar` uzantılı dosyayı SQL'e dönüştürerek de kullanabilirsiniz.
 
 ---
