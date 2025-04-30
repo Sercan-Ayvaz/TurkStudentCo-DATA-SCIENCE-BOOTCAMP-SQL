@@ -291,7 +291,7 @@ TEMPLATE template0;
 -------------------------------------------------------------------------------------
 -- country tablosu oluşturma
 CREATE TABLE country (
-    country_id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    country_id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     country_name varchar(150) NOT NULL,
     country_code char(2) UNIQUE NOT NULL,
     phone_code varchar(15) NOT NULL
@@ -309,7 +309,7 @@ COMMENT ON COLUMN country.phone_code IS 'Ülkelerin telefon kodlarını saklayan
 -------------------------------------------------------------------------------------
 -- member tablosu oluşturma
 CREATE TABLE member (
-    member_id BIGSERIAL PRIMARY KEY,
+    member_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
     user_name VARCHAR(50) UNIQUE NOT NULL,
@@ -317,9 +317,9 @@ CREATE TABLE member (
         CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
     password VARCHAR(255) NOT NULL 
         CHECK (length(password) >= 8),
-    country_id int NOT NULL 
+    country_id SMALLINT NOT NULL 
         REFERENCES country(country_id),
-    registration TIMESTAMPTZ NOT NULL 
+    registration TIMESTAMP NOT NULL 
         DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
@@ -342,7 +342,7 @@ COMMENT ON COLUMN member.is_active IS 'Üyelerin aktifliğini saklayan kolon';
 -------------------------------------------------------------------------------------
 -- certificates tablosu oluşturma
 CREATE TABLE certificates (
-    certificate_id BIGSERIAL PRIMARY KEY,
+    certificate_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     certificate_code VARCHAR(50) UNIQUE NOT NULL
 );
 -------------------------------------------------------------------------------------
@@ -354,9 +354,9 @@ COMMENT ON COLUMN certificates.certificate_code IS '(UK) Sertifikanın benzersiz
 -------------------------------------------------------------------------------------
 -- certificates_assignments tablosu oluşturma
 CREATE TABLE certificates_assignments (
-    certificates_assignments_id BIGSERIAL PRIMARY KEY,
-    member_id BIGINT NOT NULL REFERENCES member(member_id),
-    certificate_id BIGINT NOT NULL REFERENCES certificates(certificate_id),
+    certificates_assignments_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    member_id INT NOT NULL REFERENCES member(member_id),
+    certificate_id INT NOT NULL REFERENCES certificates(certificate_id),
     date_of_issue DATE NOT NULL,
 	UNIQUE(member_id, certificate_id)
 );
@@ -373,17 +373,17 @@ COMMENT ON COLUMN certificates_assignments.date_of_issue IS 'Sertifikaların üy
 -------------------------------------------------------------------------------------
 -- author tablosu oluşturma
 CREATE TABLE author (
-    author_id SERIAL PRIMARY KEY,
+    author_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     surname VARCHAR(100) NOT NULL,
     birthday DATE NOT NULL,
-    country_id INT NOT NULL REFERENCES country(country_id),
+    country_id SMALLINT NOT NULL REFERENCES country(country_id),
     email VARCHAR(100) UNIQUE NOT NULL,
-    biography TEXT NOT NULL,
-    creation_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+    biography VARCHAR(4000) NOT NULL,
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     -- Email format kontrolü
     CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),    
-    -- Geçerli doğum tarihi kontrolü (1900'den sonra doğmuş varsayıyoruz)
+    -- Geçerli doğum tarihi kontrolü (1800'den sonra doğmuş varsayıyoruz)
     CONSTRAINT valid_birthday CHECK (birthday > '1800-01-01' AND birthday <= CURRENT_DATE)
 );
 -------------------------------------------------------------------------------------
@@ -405,10 +405,10 @@ COMMENT ON COLUMN author.creation_date IS 'Yazarların tabloya kayıt tarihini g
 -------------------------------------------------------------------------------------
 -- blogpost tablosu oluşturma
 CREATE TABLE blogpost (
-    blogpost_id BIGSERIAL PRIMARY KEY,
+    blogpost_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    contents TEXT NOT NULL,
-    publication_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    contents VARCHAR(4000) NOT NULL,
+    publication_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     author_id INT NOT NULL REFERENCES author(author_id),
     status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
     CONSTRAINT valid_publication_date CHECK (publication_date <= CURRENT_TIMESTAMP + INTERVAL '1 hour')
@@ -432,7 +432,7 @@ COMMENT ON COLUMN blogpost.status IS 'Yazının durumunu belirten kolonur(taslak
 -------------------------------------------------------------------------------------
 -- branch tablosu oluşturma
 CREATE TABLE branch (
-    branch_id SERIAL PRIMARY KEY,
+    branch_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     branch_name VARCHAR(100) UNIQUE NOT NULL,
 	is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
@@ -448,13 +448,13 @@ COMMENT ON COLUMN branch.is_active IS 'Dalların aktif olup olmadığını liste
 -------------------------------------------------------------------------------------
 -- instructor tablosu oluşturma
 CREATE TABLE instructor (
-    instructor_id SERIAL PRIMARY KEY,
+    instructor_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL 
         CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
     phone VARCHAR(20) NOT NULL,
-    country_id INT NOT NULL REFERENCES country(country_id),
+    country_id SMALLINT NOT NULL REFERENCES country(country_id),
     branch_id INT NOT NULL REFERENCES branch(branch_id),
 	is_active BOOLEAN NOT NULL DEFAULT TRUE,
     hire_date DATE NOT NULL DEFAULT CURRENT_DATE
@@ -481,7 +481,7 @@ COMMENT ON COLUMN instructor.hire_date IS 'Eğitmenlerin işe alım tarihini lis
 -------------------------------------------------------------------------------------
 -- categories tablosu oluşturma
 CREATE TABLE categories (
-    category_id SERIAL PRIMARY KEY,
+    category_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     artificial_intelligence VARCHAR(100) NOT NULL,
     blockchain VARCHAR(100) NOT NULL,
     cyber_security VARCHAR(100) NOT NULL
@@ -500,17 +500,17 @@ COMMENT ON COLUMN categories.cyber_security IS 'Kategoriler tablosunda siber gü
 -------------------------------------------------------------------------------------
 -- course tablosu oluşturma
 CREATE TABLE course (
-    course_id SERIAL PRIMARY KEY,
+    course_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     course_name VARCHAR(200) NOT NULL,
     course_code VARCHAR(20) UNIQUE NOT NULL,
-    explanation TEXT,
+    explanation VARCHAR(4000),
     course_start_date DATE NOT NULL DEFAULT CURRENT_DATE,
     course_end_date DATE NOT NULL DEFAULT (CURRENT_DATE + INTERVAL '2 months'),
     category_id INT NOT NULL REFERENCES categories(category_id),
     instructor_id INT NOT NULL REFERENCES instructor(instructor_id),
     price DECIMAL(10, 2) CHECK (price >= 0),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_course_dates CHECK (course_end_date > course_start_date),
     CONSTRAINT valid_course_code CHECK (course_code ~ '^[A-Z]{2,4}-[0-9]{3}$')
 );
@@ -538,10 +538,10 @@ COMMENT ON COLUMN course.created_at IS 'Kursların oluşturma tarihini listeleye
 -------------------------------------------------------------------------------------
 -- enrollments tablosu oluşturma
 CREATE TABLE enrollments (
-    enrollment_id BIGSERIAL PRIMARY KEY,
-    member_id BIGINT NOT NULL REFERENCES member(member_id),
+    enrollment_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    member_id INT NOT NULL REFERENCES member(member_id),
     course_id INT NOT NULL REFERENCES course(course_id),
-    enrollment_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    enrollment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_member_course UNIQUE (member_id, course_id)
 );
 -------------------------------------------------------------------------------------
