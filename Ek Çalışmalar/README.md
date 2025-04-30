@@ -1,8 +1,8 @@
-# Eğitim İçerikleri - PostgreSQL
+# 📕Eğitim İçerikleri - PostgreSQL
 Bu depo, PostgreSQL ve Veritabanı Yönetim Sistemleri üzerine kapsamlı bir eğitim sürecini kapsamaktadır. 
 Eğitim, temel veritabanı kavramlarından başlayıp, ileri düzey SQL tekniklerine kadar geniş bir yelpazeyi içermektedir.
 
-## İçindekiler
+## 📑İçindekiler
 1. Veritabanı Temelleri
   - Veri Nedir?
   - Veritabanı Nedir?
@@ -70,7 +70,7 @@ Eğitim, temel veritabanı kavramlarından başlayıp, ileri düzey SQL teknikle
 12. Veritabanı Kısıtlamaları (Constraints)
   - Primary Key, Foreign Key, Unique, Check, Not Null Constraints
 
-## Eğitim Hedefi
+## 🎯Eğitim Hedefi
 Bu eğitim, PostgreSQL veritabanı yönetim sisteminde kullanılan temel ve ileri düzey SQL komutlarını öğretmeyi amaçlamaktadır.
 Eğitim boyunca kullanıcılar, veritabanı oluşturma, veri ekleme, güncelleme ve sorgulama işlemleri gibi çeşitli temel SQL komutları hakkında bilgi sahibi olacaklardır.
 
@@ -78,10 +78,10 @@ Eğitim boyunca kullanıcılar, veritabanı oluşturma, veri ekleme, güncelleme
  - PostgreSQL: Eğitimde veritabanı yönetim sistemi olarak PostgreSQL kullanılmıştır. 
  - SQL: Eğitimde, ilişkisel veritabanları üzerinde SQL kullanımı detaylıca ele alınmıştır.
 
-## Eğitim Kaynağı
+## 📚Eğitim Kaynağı
 Eğitim boyunca kullanılan materyallerin tamamı bu depoda mevcuttur. Her bölüm, ilgili SQL komutları ve açıklamalarla zenginleştirilmiştir.
 
-## Kurulum
+## ⏬Kurulum
 Eğitim materyallerini kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları takip edebilirsiniz:
 PostgreSQL'i bilgisayarınıza indirin ve kurun: PostgreSQL İndirme Linki
 Bu depo içindeki SQL dosyalarını PostgreSQL veritabanınıza yükleyin.
