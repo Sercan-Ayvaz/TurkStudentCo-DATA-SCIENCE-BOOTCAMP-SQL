@@ -19,9 +19,9 @@ Eğer bulamazsanız, `.tar` uzantılı dosyayı SQL'e dönüştürerek de kullan
 
 İlk olarak PostgreSQL'de boş bir veritabanı oluşturun. Örneğin:
 
-```sql
+```
 CREATE DATABASE dvdrental;
-
+```
 ## 2. SQL Dosyasını Yükleyin
 1. Yöntem: pgAdmin (GUI)
 - dvdrental.sql dosyasını açın.
@@ -30,7 +30,7 @@ CREATE DATABASE dvdrental;
 - Dosyanın içeriğini yapıştırın ve Execute (▶) butonuna basın.
 
 2. Yöntem: Terminal (psql)
-
+```
 psql -U postgres -d dvdrental -f dvdrental.sql
 ```
 ___U postgres kısmı kullanıcı adını, -d dvdrental ise veritabanı adını temsil eder.___
