@@ -75,9 +75,9 @@ CREATE INDEX idx_cert_assign_member ON certificates_assignments(member_id);
 CREATE INDEX idx_cert_assign_cert ON certificates_assignments(certificate_id);
 -------------------------------------------------------------------------------------
 COMMENT ON TABLE certificates_assignments IS 'Üyelere sertifika atamalarını takip eden tablo';
-COMMENT ON COLUMN certificates_assignments.member_id IS '(FK-Unique)Sertifika atamaları talosuyla üyeler tablosu arasındaki bağlantı kurulan kolon';
+COMMENT ON COLUMN certificates_assignments.member_id IS '(FK-Unique)Sertifika atamaları tablosuyla üyeler tablosu arasındaki bağlantı kurulan kolon';
 COMMENT ON COLUMN certificates_assignments.certificate_id IS 'sertifika bağlantıları ile sertifika tablosu arasında bağlantı kurulan kolon';
-COMMENT ON COLUMN certificates_assignments.date_of_issue IS 'Sertifikaların üyeler verildiği tairihi tutan kolon';
+COMMENT ON COLUMN certificates_assignments.date_of_issue IS 'Sertifikaların üyeler verildiği tarihi tutan kolon';
 -------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ CREATE TABLE author (
     country_id SMALLINT NOT NULL REFERENCES country(country_id),
     email VARCHAR(100) UNIQUE NOT NULL,
     biography VARCHAR(4000) NOT NULL,
-    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     -- Email format kontrolü
     CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),    
     -- Geçerli doğum tarihi kontrolü (1800'den sonra doğmuş varsayıyoruz)
@@ -107,7 +107,7 @@ COMMENT ON COLUMN author.surname IS 'Yazarların soyad bilgilerini saklayan kolo
 COMMENT ON COLUMN author.birthday IS 'Yazarların doğum tarihlerini saklayan kolon ';
 COMMENT ON COLUMN author.country_id IS '(FK) Yazarların yaşadıkları ülkeyi country tablosuyla ilişkilendiren kolon';
 COMMENT ON COLUMN author.email IS '(UK) Yazarların emailllerini saklayan kolon';
-COMMENT ON COLUMN author.biography IS 'Yazarların biyografilerini sakalayan kolon';
+COMMENT ON COLUMN author.biography IS 'Yazarların biyografilerini saklayan kolon';
 COMMENT ON COLUMN author.creation_date IS 'Yazarların tabloya kayıt tarihini gösteren kolon';
 -------------------------------------------------------------------------------------
 
@@ -125,7 +125,7 @@ CREATE TABLE blogpost (
 );
 -------------------------------------------------------------------------------------
 CREATE INDEX idx_blogpost_author ON blogpost(author_id);
-CREATE INDEX idx_blogpost_publication ON blogpost(publication_date DESC);
+CREATE INDEX idx_blogpost_publication ON blogpost(publication_date);
 CREATE INDEX idx_blogpost_status ON blogpost(status) WHERE status = 'published';
 -------------------------------------------------------------------------------------
 COMMENT ON TABLE blogpost IS 'Blog yazılarını içeren tablo';
@@ -133,7 +133,7 @@ COMMENT ON COLUMN blogpost.title IS 'Yazılan blogların başlığını tutan ko
 COMMENT ON COLUMN blogpost.contents IS 'Yazılan blogların içeriğini tutan kolondur';
 COMMENT ON COLUMN blogpost.publication_date IS 'Yazılan blogların yayımlandığı tarihi tutan kolondur.Yazılar en falza 1 saat sonrası için yayımlanma zamanı verebilir ';
 COMMENT ON COLUMN blogpost.author_id IS '(FK) Yazıyı yazan yazar ile yazılan yazının ilişkisini sağlayan kolondur';
-COMMENT ON COLUMN blogpost.status IS 'Yazının durumunu belirten kolonur(taslak,yayımlanmış ve arşivlenmiş)';
+COMMENT ON COLUMN blogpost.status IS 'Yazının durumunu belirten kolondur(taslak,yayımlanmış ve arşivlenmiş)';
 -------------------------------------------------------------------------------------
 
 
@@ -151,7 +151,7 @@ CREATE INDEX idx_branch_active ON branch(is_active) WHERE is_active = TRUE;
 -------------------------------------------------------------------------------------
 COMMENT ON TABLE branch IS 'Dal bilgilerini içeren tablo';
 COMMENT ON COLUMN branch.branch_name IS 'Dal isimleri listeleyn kolon';
-COMMENT ON COLUMN branch.is_active IS 'Dalların aktif olup olmadığını listeleyn kolon';
+COMMENT ON COLUMN branch.is_active IS 'Dalların aktif olup olmadığını listeleyen kolon';
 -------------------------------------------------------------------------------------
 
 
@@ -167,7 +167,7 @@ CREATE TABLE instructor (
     country_id SMALLINT NOT NULL REFERENCES country(country_id),
     branch_id INT NOT NULL REFERENCES branch(branch_id),
 	is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    hire_date DATE NOT NULL DEFAULT CURRENT_DATE
+    hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
     CONSTRAINT valid_hire_date CHECK (hire_date <= CURRENT_DATE)
 );
 -------------------------------------------------------------------------------------
@@ -192,18 +192,14 @@ COMMENT ON COLUMN instructor.hire_date IS 'Eğitmenlerin işe alım tarihini lis
 -- categories tablosu oluşturma
 CREATE TABLE categories (
     category_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    artificial_intelligence VARCHAR(100) NOT NULL,
-    blockchain VARCHAR(100) NOT NULL,
-    cyber_security VARCHAR(100) NOT NULL
+    category_name VARCHAR(100) UNIQUE NOT NULL
 );
 -------------------------------------------------------------------------------------
-COMMENT ON TABLE categories IS 'Kategori bilgilerini içeren tablo';
-COMMENT ON COLUMN categories.artificial_intelligence IS 'Kategoriler tablosunda yapay zeka verisini tutan kolon';
-COMMENT ON COLUMN categories.blockchain IS 'Kategoriler tablosunda blockchain verisini tutan kolon';
-COMMENT ON COLUMN categories.cyber_security IS 'Kategoriler tablosunda siber güvenlik verisini tutan kolon';
+CREATE INDEX idx_categories_category_name ON categories(category_name);
 -------------------------------------------------------------------------------------
-
-
+COMMENT ON TABLE categories IS 'Kategori bilgilerini içeren tablo';
+COMMENT ON COLUMN categories.category_name IS 'Kategoriler tablosunda kategori adlarını tutan kolondur';
+-------------------------------------------------------------------------------------
 
 
 
