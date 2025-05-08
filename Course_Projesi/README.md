@@ -155,9 +155,7 @@
   |Sütun Adı | Veri Tipi | Açıklama|
   | --- | --- | --- |
   |category_id | INT | Kategori ID (PK)|
-  |artificial_intelligence | VARCHAR(100) | Yapay zeka kategorisi|
-  |blockchain | VARCHAR(100) | Blockchain kategorisi|
-  |cyber_security | VARCHAR(100) | Siber güvenlik kategorisi|
+  |category_name | VARCHAR(100) | Kategori adları(UK)|
 
   10. Kurs (course)
 
@@ -365,9 +363,9 @@ CREATE INDEX idx_cert_assign_member ON certificates_assignments(member_id);
 CREATE INDEX idx_cert_assign_cert ON certificates_assignments(certificate_id);
 -------------------------------------------------------------------------------------
 COMMENT ON TABLE certificates_assignments IS 'Üyelere sertifika atamalarını takip eden tablo';
-COMMENT ON COLUMN certificates_assignments.member_id IS '(FK-Unique)Sertifika atamaları talosuyla üyeler tablosu arasındaki bağlantı kurulan kolon';
+COMMENT ON COLUMN certificates_assignments.member_id IS '(FK-Unique)Sertifika atamaları tablosuyla üyeler tablosu arasındaki bağlantı kurulan kolon';
 COMMENT ON COLUMN certificates_assignments.certificate_id IS 'sertifika bağlantıları ile sertifika tablosu arasında bağlantı kurulan kolon';
-COMMENT ON COLUMN certificates_assignments.date_of_issue IS 'Sertifikaların üyeler verildiği tairihi tutan kolon';
+COMMENT ON COLUMN certificates_assignments.date_of_issue IS 'Sertifikaların üyeler verildiği tarihi tutan kolon';
 -------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------
@@ -380,7 +378,7 @@ CREATE TABLE author (
     country_id SMALLINT NOT NULL REFERENCES country(country_id),
     email VARCHAR(100) UNIQUE NOT NULL,
     biography VARCHAR(4000) NOT NULL,
-    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     -- Email format kontrolü
     CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),    
     -- Geçerli doğum tarihi kontrolü (1800'den sonra doğmuş varsayıyoruz)
@@ -397,7 +395,7 @@ COMMENT ON COLUMN author.surname IS 'Yazarların soyad bilgilerini saklayan kolo
 COMMENT ON COLUMN author.birthday IS 'Yazarların doğum tarihlerini saklayan kolon ';
 COMMENT ON COLUMN author.country_id IS '(FK) Yazarların yaşadıkları ülkeyi country tablosuyla ilişkilendiren kolon';
 COMMENT ON COLUMN author.email IS '(UK) Yazarların emailllerini saklayan kolon';
-COMMENT ON COLUMN author.biography IS 'Yazarların biyografilerini sakalayan kolon';
+COMMENT ON COLUMN author.biography IS 'Yazarların biyografilerini saklayan kolon';
 COMMENT ON COLUMN author.creation_date IS 'Yazarların tabloya kayıt tarihini gösteren kolon';
 -------------------------------------------------------------------------------------
 
@@ -415,7 +413,7 @@ CREATE TABLE blogpost (
 );
 -------------------------------------------------------------------------------------
 CREATE INDEX idx_blogpost_author ON blogpost(author_id);
-CREATE INDEX idx_blogpost_publication ON blogpost(publication_date DESC);
+CREATE INDEX idx_blogpost_publication ON blogpost(publication_date);
 CREATE INDEX idx_blogpost_status ON blogpost(status) WHERE status = 'published';
 -------------------------------------------------------------------------------------
 COMMENT ON TABLE blogpost IS 'Blog yazılarını içeren tablo';
@@ -423,7 +421,7 @@ COMMENT ON COLUMN blogpost.title IS 'Yazılan blogların başlığını tutan ko
 COMMENT ON COLUMN blogpost.contents IS 'Yazılan blogların içeriğini tutan kolondur';
 COMMENT ON COLUMN blogpost.publication_date IS 'Yazılan blogların yayımlandığı tarihi tutan kolondur.Yazılar en falza 1 saat sonrası için yayımlanma zamanı verebilir ';
 COMMENT ON COLUMN blogpost.author_id IS '(FK) Yazıyı yazan yazar ile yazılan yazının ilişkisini sağlayan kolondur';
-COMMENT ON COLUMN blogpost.status IS 'Yazının durumunu belirten kolonur(taslak,yayımlanmış ve arşivlenmiş)';
+COMMENT ON COLUMN blogpost.status IS 'Yazının durumunu belirten kolondur(taslak,yayımlanmış ve arşivlenmiş)';
 -------------------------------------------------------------------------------------
 
 
@@ -441,7 +439,7 @@ CREATE INDEX idx_branch_active ON branch(is_active) WHERE is_active = TRUE;
 -------------------------------------------------------------------------------------
 COMMENT ON TABLE branch IS 'Dal bilgilerini içeren tablo';
 COMMENT ON COLUMN branch.branch_name IS 'Dal isimleri listeleyn kolon';
-COMMENT ON COLUMN branch.is_active IS 'Dalların aktif olup olmadığını listeleyn kolon';
+COMMENT ON COLUMN branch.is_active IS 'Dalların aktif olup olmadığını listeleyen kolon';
 -------------------------------------------------------------------------------------
 
 
@@ -457,7 +455,7 @@ CREATE TABLE instructor (
     country_id SMALLINT NOT NULL REFERENCES country(country_id),
     branch_id INT NOT NULL REFERENCES branch(branch_id),
 	is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    hire_date DATE NOT NULL DEFAULT CURRENT_DATE
+    hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
     CONSTRAINT valid_hire_date CHECK (hire_date <= CURRENT_DATE)
 );
 -------------------------------------------------------------------------------------
@@ -482,18 +480,14 @@ COMMENT ON COLUMN instructor.hire_date IS 'Eğitmenlerin işe alım tarihini lis
 -- categories tablosu oluşturma
 CREATE TABLE categories (
     category_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    artificial_intelligence VARCHAR(100) NOT NULL,
-    blockchain VARCHAR(100) NOT NULL,
-    cyber_security VARCHAR(100) NOT NULL
+    category_name VARCHAR(100) UNIQUE NOT NULL
 );
 -------------------------------------------------------------------------------------
-COMMENT ON TABLE categories IS 'Kategori bilgilerini içeren tablo';
-COMMENT ON COLUMN categories.artificial_intelligence IS 'Kategoriler tablosunda yapay zeka verisini tutan kolon';
-COMMENT ON COLUMN categories.blockchain IS 'Kategoriler tablosunda blockchain verisini tutan kolon';
-COMMENT ON COLUMN categories.cyber_security IS 'Kategoriler tablosunda siber güvenlik verisini tutan kolon';
+CREATE INDEX idx_categories_category_name ON categories(category_name);
 -------------------------------------------------------------------------------------
-
-
+COMMENT ON TABLE categories IS 'Kategori bilgilerini içeren tablo';
+COMMENT ON COLUMN categories.category_name IS 'Kategoriler tablosunda kategori adlarını tutan kolondur';
+-------------------------------------------------------------------------------------
 
 
 
@@ -610,9 +604,9 @@ INSERT INTO country (country_name, country_code, phone_code) VALUES
 -------------------------------------------------------------------------------------
 -- member tablosuna verileri ekeleme
 INSERT INTO member (name, surname, user_name, email, password, country_id, is_active) VALUES
-    ('Ahmet', 'Yılmaz', 'ahmet.yilmaz', 'ahmet.yilmaz@example.com', 'SecurePass123', 1, TRUE),
+    ('Ahmet', 'Yýlmaz', 'ahmet.yilmaz', 'ahmet.yilmaz@example.com', 'SecurePass123', 1, TRUE),
     ('Mehmet', 'Kaya', 'mehmet.kaya', 'mehmet.kaya@example.com', 'StrongPwd456', 1, TRUE),
-    ('Ayşe', 'Demir', 'ayse.demir', 'ayse.demir@example.com', 'Complex789!', 1, TRUE),
+    ('Ayþe', 'Demir', 'ayse.demir', 'ayse.demir@example.com', 'Complex789!', 1, TRUE),
     ('John', 'Smith', 'john.smith', 'john.smith@example.com', 'JohnPass123', 2, TRUE),
     ('Emily', 'Johnson', 'emily.johnson', 'emily.johnson@example.com', 'EmilyPwd456', 2, TRUE),
     ('Hans', 'Müller', 'hans.muller', 'hans.muller@example.com', 'GermanPass1', 3, FALSE),
@@ -724,42 +718,42 @@ INSERT INTO certificates_assignments (member_id, certificate_id, date_of_issue) 
 -- author tablosuna verileri ekeleme
 INSERT INTO author (name, surname, birthday, country_id, email, biography) VALUES
 	('Orhan', 'Pamuk', '1952-06-07', 1, 'orhan.pamuk@example.com', 'Nobel Edebiyat Ödülü sahibi Türk yazar'),
-	('Yaşar', 'Kemal', '1923-10-06', 1, 'yasar.kemal@example.com', 'Çağdaş Türk edebiyatının en önemli yazarlarından'),
-	('Elif', 'Şafak', '1971-10-25', 1, 'elif.safak@example.com', 'Uluslararası üne sahip Türk yazar'),
-	('Stephen', 'King', '1947-09-21', 2, 'stephen.king@example.com', 'Amerikalı korku ve gerilim yazarı'),
-	('J.K.', 'Rowling', '1965-07-31', 3, 'jk.rowling@example.com', 'Harry Potter serisinin yaratıcısı'),
-	('Gabriel', 'García Márquez', '1927-03-06', 4, 'gabriel.marquez@example.com', 'Kolombiyalı büyülü gerçekçilik yazarı'),
+	('Yaþar', 'Kemal', '1923-10-06', 1, 'yasar.kemal@example.com', 'Çaðdaþ Türk edebiyatýnýn en önemli yazarlarýndan'),
+	('Elif', 'Þafak', '1971-10-25', 1, 'elif.safak@example.com', 'Uluslararasý üne sahip Türk yazar'),
+	('Stephen', 'King', '1947-09-21', 2, 'stephen.king@example.com', 'Amerikalý korku ve gerilim yazarý'),
+	('J.K.', 'Rowling', '1965-07-31', 3, 'jk.rowling@example.com', 'Harry Potter serisinin yaratýcýsý'),
+	('Gabriel', 'García Márquez', '1927-03-06', 4, 'gabriel.marquez@example.com', 'Kolombiyalý büyülü gerçekçilik yazarý'),
 	('Haruki', 'Murakami', '1949-01-12', 7, 'haruki.murakami@example.com', 'Japon postmodernist yazar'),
-	('Leo', 'Tolstoy', '1828-09-09', 5, 'leo.tolstoy@example.com', 'Rus edebiyatının dev ismi'),
-	('Virginia', 'Woolf', '1882-01-25', 3, 'virginia.woolf@example.com', 'İngiliz modernist yazar'),
-	('Albert', 'Camus', '1913-11-07', 4, 'albert.camus@example.com', 'Fransız varoluşçu yazar ve filozof');
+	('Leo', 'Tolstoy', '1828-09-09', 5, 'leo.tolstoy@example.com', 'Rus edebiyatýnýn dev ismi'),
+	('Virginia', 'Woolf', '1882-01-25', 3, 'virginia.woolf@example.com', 'Ýngiliz modernist yazar'),
+	('Albert', 'Camus', '1913-11-07', 4, 'albert.camus@example.com', 'Fransýz varoluþçu yazar ve filozof');
 
 INSERT INTO author (name, surname, birthday, country_id, email, biography) VALUES	
-	('Pablo', 'Neruda', '1904-07-12', 6, 'pablo.neruda@example.com', 'Şilili şair ve diplomat'),
-	('Franz', 'Kafka', '1883-07-03', 8, 'franz.kafka@example.com', 'Çek asıllı Alman yazar'),
-	('Fyodor', 'Dostoyevsky', '1821-11-11', 5, 'fyodor.dostoyevsky@example.com', 'Rus edebiyatının önemli romancısı'),
-	('Ernest', 'Hemingway', '1899-07-21', 2, 'ernest.hemingway@example.com', 'Amerikalı yazar ve gazeteci');
+	('Pablo', 'Neruda', '1904-07-12', 6, 'pablo.neruda@example.com', 'Þilili þair ve diplomat'),
+	('Franz', 'Kafka', '1883-07-03', 8, 'franz.kafka@example.com', 'Çek asýllý Alman yazar'),
+	('Fyodor', 'Dostoyevsky', '1821-11-11', 5, 'fyodor.dostoyevsky@example.com', 'Rus edebiyatýnýn önemli romancýsý'),
+	('Ernest', 'Hemingway', '1899-07-21', 2, 'ernest.hemingway@example.com', 'Amerikalý yazar ve gazeteci');
 -------------------------------------------------------------------------------------
 
 
 -------------------------------------------------------------------------------------
 -- blogpost tablosuna verileri ekeleme
 INSERT INTO blogpost (title, contents, publication_date, author_id, status) VALUES
-    ('PostgreSQL Temelleri', 'PostgreSQL, açık kaynaklı bir ilişkisel veritabanı yönetim sistemidir...', '2023-05-10 09:15:00', 1, 'published'),
-    ('Veritabanı Optimizasyon Teknikleri', 'Veritabanı performansını artırmak için çeşitli teknikler mevcuttur...', '2023-05-12 14:30:00', 2, 'published'),
-    ('SQL Injection ve Korunma Yolları', 'SQL injection, web uygulamalarında sık karşılaşılan bir güvenlik açığıdır...', '2023-05-15 11:45:00', 3, 'published'),
-    ('Yeni Başlayanlar İçin Python', 'Python, öğrenmesi kolay ve güçlü bir programlama dilidir...', '2023-06-01 10:00:00', 4, 'draft'),
-    ('Makine Öğrenmesine Giriş', 'Makine öğrenmesi, yapay zekanın önemli bir alt dalıdır...', '2023-06-05 16:20:00', 5, 'published'),
-    ('Web Geliştirme Trendleri 2023', '2023 yılında web geliştirme dünyasında öne çıkan trendler...', '2023-06-10 13:10:00', 6, 'archived'),
-    ('Docker ile Konteynerleştirme', 'Docker, uygulamaları konteynerler halinde paketlemeyi sağlar...', '2023-06-15 09:30:00', 7, 'published'),
-    ('React vs Vue: Karşılaştırma', 'Modern frontend frameworkleri React ve Vue arasındaki farklar...', '2023-06-20 15:45:00', 8, 'draft'),
-    ('Bulut Bilişim Avantajları', 'Bulut bilişimin işletmelere sağladığı avantajlar ve kullanım senaryoları...', '2023-07-01 12:00:00', 9, 'published'),
-    ('Veri Yapıları ve Algoritmalar', 'Temel veri yapıları ve algoritmalar hakkında kapsamlı bir rehber...', '2023-07-05 10:30:00', 10, 'published');
+    ('PostgreSQL Temelleri', 'PostgreSQL, açýk kaynaklý bir iliþkisel veritabaný yönetim sistemidir...', '2023-05-10 09:15:00', 1, 'published'),
+    ('Veritabaný Optimizasyon Teknikleri', 'Veritabaný performansýný artýrmak için çeþitli teknikler mevcuttur...', '2023-05-12 14:30:00', 2, 'published'),
+    ('SQL Injection ve Korunma Yollarý', 'SQL injection, web uygulamalarýnda sýk karþýlaþýlan bir güvenlik açýðýdýr...', '2023-05-15 11:45:00', 3, 'published'),
+    ('Yeni Baþlayanlar Ýçin Python', 'Python, öðrenmesi kolay ve güçlü bir programlama dilidir...', '2023-06-01 10:00:00', 4, 'draft'),
+    ('Makine Öðrenmesine Giriþ', 'Makine öðrenmesi, yapay zekanýn önemli bir alt dalýdýr...', '2023-06-05 16:20:00', 5, 'published'),
+    ('Web Geliþtirme Trendleri 2023', '2023 yýlýnda web geliþtirme dünyasýnda öne çýkan trendler...', '2023-06-10 13:10:00', 6, 'archived'),
+    ('Docker ile Konteynerleþtirme', 'Docker, uygulamalarý konteynerler halinde paketlemeyi saðlar...', '2023-06-15 09:30:00', 7, 'published'),
+    ('React vs Vue: Karþýlaþtýrma', 'Modern frontend frameworkleri React ve Vue arasýndaki farklar...', '2023-06-20 15:45:00', 8, 'draft'),
+    ('Bulut Biliþim Avantajlarý', 'Bulut biliþimin iþletmelere saðladýðý avantajlar ve kullaným senaryolarý...', '2023-07-01 12:00:00', 9, 'published'),
+    ('Veri Yapýlarý ve Algoritmalar', 'Temel veri yapýlarý ve algoritmalar hakkýnda kapsamlý bir rehber...', '2023-07-05 10:30:00', 10, 'published');
 INSERT INTO blogpost (title, contents, publication_date, author_id, status) VALUES
-    ('Yapay Zeka Etiği', 'Yapay zeka uygulamalarında karşılaşılan etik sorunlar...', '2023-07-10 14:15:00', 11, 'draft'),
-    ('Blockchain Teknolojisi', 'Blockchain teknolojisinin temelleri ve kullanım alanları...', '2023-07-15 11:20:00', 12, 'published'),
-    ('DevOps Kültürü', 'DevOps yaklaşımı ve yazılım geliştirme süreçlerine etkisi...', '2023-07-20 16:30:00', 13, 'archived'),
-    ('Mikroservis Mimarisi', 'Mikroservis mimarisinin avantajları ve uygulama örnekleri...', '2023-08-01 13:45:00', 14, 'published');
+    ('Yapay Zeka Etiði', 'Yapay zeka uygulamalarýnda karþýlaþýlan etik sorunlar...', '2023-07-10 14:15:00', 11, 'draft'),
+    ('Blockchain Teknolojisi', 'Blockchain teknolojisinin temelleri ve kullaným alanlarý...', '2023-07-15 11:20:00', 12, 'published'),
+    ('DevOps Kültürü', 'DevOps yaklaþýmý ve yazýlým geliþtirme süreçlerine etkisi...', '2023-07-20 16:30:00', 13, 'archived'),
+    ('Mikroservis Mimarisi', 'Mikroservis mimarisinin avantajlarý ve uygulama örnekleri...', '2023-08-01 13:45:00', 14, 'published');
 
 -------------------------------------------------------------------------------------
 
@@ -796,9 +790,9 @@ INSERT INTO branch (branch_name, is_active) VALUES
 -------------------------------------------------------------------------------------
 -- instructor tablosuna verileri ekeleme
 INSERT INTO instructor (name, surname, email, phone, country_id, branch_id, is_active, hire_date) VALUES
-    ('Ahmet', 'Yılmaz', 'ahmet.yilmaz@academy.com', '+905551234567', 1, 1, TRUE, '2020-03-15'),
+    ('Ahmet', 'Yýlmaz', 'ahmet.yilmaz@academy.com', '+905551234567', 1, 1, TRUE, '2020-03-15'),
     ('Mehmet', 'Kaya', 'mehmet.kaya@academy.com', '+905552345678', 1, 2, TRUE, '2019-05-10'),
-    ('Ayşe', 'Demir', 'ayse.demir@academy.com', '+905553456789', 1, 3, TRUE, '2021-01-20'),
+    ('Ayþe', 'Demir', 'ayse.demir@academy.com', '+905553456789', 1, 3, TRUE, '2021-01-20'),
     ('John', 'Smith', 'john.smith@academy.com', '+12025551234', 2, 4, TRUE, '2018-11-05'),
     ('Emily', 'Johnson', 'emily.johnson@academy.com', '+12035552345', 2, 5, FALSE, '2022-02-28'),
     ('David', 'Brown', 'david.brown@academy.com', '+4407912345678', 3, 6, TRUE, '2020-07-12'),
@@ -818,17 +812,17 @@ INSERT INTO instructor (name, surname, email, phone, country_id, branch_id, is_a
 
 -------------------------------------------------------------------------------------
 -- categories tablosuna verileri ekeleme
-INSERT INTO categories (artificial_intelligence, blockchain, cyber_security) VALUES
-	('Machine Learning', 'Smart Contracts', 'Network Security'),
-	('Deep Learning', 'Decentralized Finance', 'Ethical Hacking'),
-	('Neural Networks', 'NFTs', 'Penetration Testing'),
-	('Computer Vision', 'Web3', 'Cryptography'),
-	('Natural Language Processing', 'DApps', 'Security Audits'),
-	('Reinforcement Learning', 'Blockchain Protocols', 'Threat Intelligence'),
-	('Generative AI', 'Tokenization', 'Incident Response'),
-	('AI Ethics', 'Consensus Algorithms', 'Vulnerability Management'),
-	('Predictive Analytics', 'Distributed Ledgers', 'Identity Management'),
-	('Robotics', 'Crypto Wallets', 'Cloud Security');
+INSERT INTO categories (category_name) VALUES
+	('Machine Learning'),
+	('Deep Learning'),
+	('Penetration Testing'),
+	('Web3'),
+	('Natural Language Processing'),
+	('Blockchain Protocols'),
+	('Generative AI'),
+	('AI Ethics'),
+	('Cloud Security'),
+	('Robotics');
 -------------------------------------------------------------------------------------
 
 
